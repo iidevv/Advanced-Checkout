@@ -1,0 +1,15 @@
+XLite\Model\Config:
+  - name: google_api_key
+    category: Iidev\AdvancedCheckout
+    type: text
+    orderby: 100
+    translations:
+      - code: en
+        option_name: "Google API Key"
+  - name: shipping_page_url
+    category: Iidev\AdvancedCheckout
+    type: text
+    orderby: 200
+    translations:
+      - code: en
+        option_name: "Shipping page url"

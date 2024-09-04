@@ -1,0 +1,10 @@
+version: 5.5.0.4
+type: common
+authorName: "Ilya I"
+moduleName: "Advanced Checkout"
+description: "This module adds features like address and email autofill, a shipping video link, and more."
+minorRequiredCoreVersion: 0
+dependsOn: {}
+incompatibleWith: {}
+showSettingsForm: true
+canDisable: true

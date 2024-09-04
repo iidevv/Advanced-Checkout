@@ -1,0 +1,11 @@
+{##
+ # @ListChild (list="checkout.review.selected.placeOrder", weight="450")
+ #}
+{% if this.getShippingPageURL() %}
+	<p class="agree-note">
+		{{ t('I have watched and I understand how shipping for large size items works.') }}
+		<a href="{{this.getShippingPageURL()}}">
+			{{ t('Shipping for large size items') }}
+		</a>
+	</p>
+{% endif %}
