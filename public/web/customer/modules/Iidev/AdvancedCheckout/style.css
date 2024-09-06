@@ -1,0 +1,25 @@
+.email-suggestions {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 110%;
+    background: #fff;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+    color: #303030;
+    width: 100%;
+    box-shadow: 0 3px 5px 0 rgba(0, 0, 0, .1);
+    z-index: 1001;
+    max-height: 30vh;
+    overflow: hidden auto;
+}
+
+.email-suggestions li {
+    cursor: pointer;
+    text-align: left;
+    padding: 10px 12px;
+}
+
+.email-suggestions li:hover {
+    background: rgba(0, 0, 0, .08);
+}

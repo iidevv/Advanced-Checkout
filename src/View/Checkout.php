@@ -9,6 +9,14 @@ use XCart\Extender\Mapping\Extender;
  */
 abstract class Checkout extends \XLite\View\Checkout
 {
+    public function getCSSFiles()
+    {
+        $list = parent::getCSSFiles();
+        $list[] = 'modules/Iidev/AdvancedCheckout/style.css';
+
+        return $list;
+    }
+
     public function getJSFiles()
     {
         $list = parent::getJSFiles();

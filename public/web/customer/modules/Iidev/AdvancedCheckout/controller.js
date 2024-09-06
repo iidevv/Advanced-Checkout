@@ -15,12 +15,94 @@ AdvancedCheckout.autoload = function () {
 AdvancedCheckout.prototype.assignInputHandlers = function () {
   this.initInputMask();
   this.initMapScript();
+  this.initEmailSuggestions();
+};
+
+AdvancedCheckout.prototype.initEmailSuggestions = function () {
+  function createSuggestionsList(emailInput) {
+    const itemList = document.createElement("ul");
+    itemList.classList.add('email-suggestions');
+    emailInput.closest(".input-field-wrapper").appendChild(itemList);
+
+    return itemList;
+  }
+
+  function clearSuggestionsList(list) {
+    list.innerHTML = "";
+  }
+
+  function createSuggestionsItem(input, extension, suggestionsList) {
+    const item = document.createElement("li");
+    item.textContent = `${input}@${extension}`;
+    suggestionsList.appendChild(item);
+  }
+
+  const emailExtensions = [
+    "gmail.com",
+    "yahoo.com",
+    "hotmail.com",
+    "aol.com",
+    "outlook.com",
+    "icloud.com",
+    "live.com",
+    "mac.com",
+    "msn.com",
+    "zoho.com",
+    "mail.com",
+  ];
+
+  const emailFieldIds = ["email", "login-email"];
+
+  emailFieldIds.forEach((emailId) => {
+    const emailInput = document.querySelector(`.email-field #${emailId}`);
+
+    if (!emailInput) return;
+
+    const suggestionsList = createSuggestionsList(emailInput);
+
+    emailInput.addEventListener("input", (e) => {
+      const inputValue = e.target.value;
+
+      clearSuggestionsList(suggestionsList);
+
+      const inputParts = inputValue.split("@");
+      const beforeAt = inputParts[0];
+      let afterAt = inputParts.length > 1 ? inputParts[1] : "";
+
+      if (inputParts.length === 1 || afterAt.length >= 0) {
+        const filteredExtensions =
+          afterAt.length > 0
+            ? emailExtensions.filter((extension) =>
+                extension.startsWith(afterAt)
+              )
+            : emailExtensions;
+
+        for (const extension of filteredExtensions) {
+          createSuggestionsItem(beforeAt, extension, suggestionsList);
+        }
+      }
+      if (inputValue.length === 0) {
+        clearSuggestionsList(suggestionsList);
+      }
+    });
+
+    suggestionsList.addEventListener("click", (e) => {
+      emailInput.value = e.target.textContent;
+      clearSuggestionsList(suggestionsList);
+    });
+  });
 };
 
 AdvancedCheckout.prototype.initInputMask = function () {
   const im = new Inputmask("(999) 999-9999");
-  im.mask(document.getElementById("shippingaddress-phone"));
-  im.mask(document.getElementById("billingaddress-phone"));
+  const bPhone = document.getElementById("shippingaddress-phone");
+  const sPhone = document.getElementById("billingaddress-phone");
+  if (sPhone) {
+    im.mask(sPhone);
+  }
+  if (bPhone) {
+    im.mask(bPhone);
+  }
 };
 
 AdvancedCheckout.prototype.initMap = async function () {
