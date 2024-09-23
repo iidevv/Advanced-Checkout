@@ -21,7 +21,7 @@ AdvancedCheckout.prototype.assignInputHandlers = function () {
 AdvancedCheckout.prototype.initEmailSuggestions = function () {
   function createSuggestionsList(emailInput) {
     const itemList = document.createElement("ul");
-    itemList.classList.add('email-suggestions');
+    itemList.classList.add("email-suggestions");
     emailInput.closest(".input-field-wrapper").appendChild(itemList);
 
     return itemList;
@@ -170,27 +170,20 @@ AdvancedCheckout.prototype.fillInAddress = function (place, type) {
     return document.getElementById(address[name][type]);
   }
 
-  function setParentListItemFocused(name, type) {
-    document
-      .getElementById(address[name][type])
-      .closest("li")
-      .classList.remove("no-value-selected");
-    document
-      .getElementById(address[name][type])
-      .closest("li")
-      .classList.add("focused");
-  }
-
   function getAddressValue(item) {
     return item.short_name || item.long_name || item;
   }
 
   function setAddressValue(field, item, type) {
-    getAddressField(field, type).value = getAddressValue(item);
-    setParentListItemFocused(field, type);
+    const event = new Event('change');
+    const addressField = getAddressField(field, type);
+
+    addressField.value = getAddressValue(item);
+    addressField.dispatchEvent(event);
   }
 
   function selectElement(field, item, type) {
+    const event = new Event('change');
     const selectElement = getAddressField(field, type);
     const optionText = item.long_name || item;
 
@@ -200,39 +193,49 @@ AdvancedCheckout.prototype.fillInAddress = function (place, type) {
       }
     });
 
-    setParentListItemFocused(field, type);
+    selectElement.dispatchEvent(event);
   }
-
-  let addressDetails = place.address_components;
 
   if (type === "billing") type = 0;
   if (type === "shipping") type = 1;
 
-  for (const addressItem of addressDetails) {
-    switch (addressItem.types[0]) {
+  let addressDetails = place.address_components;
+
+  const addressItemsSorted = [
+    "country",
+    "administrative_area_level_1",
+    "postal_code",
+    "locality",
+    "street_number",
+  ];
+
+  for (const addressItem of addressItemsSorted) {
+    const item = addressDetails.find((item) => item.types[0] === addressItem);
+
+    switch (item?.types[0]) {
+      case "country":
+        setAddressValue("country", item, type);
+        break;
+
+      case "administrative_area_level_1":
+        selectElement("state", item, type);
+        break;
+
+      case "postal_code":
+        setAddressValue("zipcode", item, type);
+        break;
+
+      case "locality":
+        setAddressValue("city", item, type);
+        break;
+
       case "street_number":
-        const streetNumber = getAddressValue(addressItem);
+        const streetNumber = getAddressValue(item);
         const streetName = getAddressValue(
           addressDetails.find((details) => details.types[0] === "route")
         );
 
         setAddressValue("address_1", `${streetNumber} ${streetName}`, type);
-        break;
-
-      case "locality":
-        setAddressValue("city", addressItem, type);
-        break;
-
-      case "administrative_area_level_1":
-        selectElement("state", addressItem, type);
-        break;
-
-      case "country":
-        setAddressValue("country", addressItem, type);
-        break;
-
-      case "postal_code":
-        setAddressValue("zipcode", addressItem, type);
         break;
 
       default:
